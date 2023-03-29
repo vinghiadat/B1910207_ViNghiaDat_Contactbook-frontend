@@ -13,6 +13,12 @@ const routes = [
     component: () => import("@/views/NotFound.vue"),
   },
   {
+    path: "/contacts",
+    name: "contact.add",
+    component: () => import("@/views/ContactAdd.vue"),
+    props: true, // Truyền các biến trong $route.params vào làm props
+  },
+  {
     path: "/contacts/:id",
     name: "contact.edit",
     component: () => import("@/views/ContactEdit.vue"),

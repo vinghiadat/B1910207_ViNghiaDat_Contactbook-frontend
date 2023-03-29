@@ -1,5 +1,5 @@
 <template>
-    <Form @submit="submitContact" :validation-schema="contactFormSchema">
+    <Form v-if="contact != null" @submit="submitContact" :validation-schema="contactFormSchema">
         <div class="form-group">
             <label for="name">Tên</label>
             <Field name="name" type="text" class="form-control" v-model="contactLocal.name" />
@@ -33,6 +33,38 @@
             </button>
         </div>
     </Form>
+    <Form v-else @submit="submitContact" :validation-schema="contactFormSchema">
+        <div class="form-group">
+            <label for="name">Tên</label>
+            <Field name="name" type="text" class="form-control" v-model="newContact.name" />
+            <ErrorMessage name="name" class="error-feedback" />
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <Field name="email" type="email" class="form-control" v-model="newContact.email" />
+            <ErrorMessage name="email" class="error-feedback" />
+        </div>
+        <div class="form-group">
+            <label for="address">Địa chỉ</label>
+            <Field name="address" type="text" class="form-control" v-model="newContact.address" />
+            <ErrorMessage name="address" class="error-feedback" />
+        </div>
+        <div class="form-group">
+            <label for="phone">Điện thoại</label>
+            <Field name="phone" type="tel" class="form-control" v-model="newContact.phone" />
+            <ErrorMessage name="phone" class="error-feedback" />
+        </div>
+        <div class="form-group form-check">
+            <input name="favorite" type="checkbox" class="form-check-input" v-model="newContact.favorite" />
+
+            <label for="favorite" class="form-check-label">
+                <strong>Liên hệ yêu thích</strong>
+            </label>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Lưu</button>
+        </div>
+    </Form>
 </template>
 <script>
 import * as yup from "yup";
@@ -45,7 +77,7 @@ export default {
     },
     emits: ["submit:contact", "delete:contact"],
     props: {
-        contact: { type: Object, required: true }
+        contact: { type: Object, required: true },
     },
     data() {
         const contactFormSchema = yup.object().shape({
@@ -71,11 +103,23 @@ export default {
             // contactLocal để liên kết với các input trên form
             contactLocal: this.contact,
             contactFormSchema,
+            newContact: {
+                name: "",
+                email: "",
+                address: "",
+                phone: "",
+                favorite: false
+            },
         };
     },
     methods: {
         submitContact() {
-            this.$emit("submit:contact", this.contactLocal);
+            if (this.contactLocal != null) {
+                this.$emit("submit:contact", this.contactLocal);
+            } else {
+                this.$emit("submit:contact", this.newContact);
+            }
+
         },
         deleteContact() {
             this.$emit("delete:contact", this.contactLocal.id);
